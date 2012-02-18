@@ -3,7 +3,7 @@ package HTTP::Daemon;
 use strict;
 use vars qw($VERSION @ISA $PROTO $DEBUG);
 
-$VERSION = "6.00";
+$VERSION = "6.01";
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 @ISA=qw(IO::Socket::INET);
