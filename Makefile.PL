@@ -1,6 +1,6 @@
 #!perl -w
 
-require 5.008008;
+require 5.008001;
 use strict;
 use ExtUtils::MakeMaker;
 
@@ -10,7 +10,7 @@ WriteMakefile(
     ABSTRACT_FROM => 'lib/HTTP/Daemon.pm',
     AUTHOR => 'Gisle Aas <gisle@activestate.com>',
     LICENSE => "perl",
-    MIN_PERL_VERSION => 5.008008,
+    MIN_PERL_VERSION => 5.008001,
     PREREQ_PM => {
 	'Sys::Hostname' => 0,
 	'IO::Socket' => 0,
