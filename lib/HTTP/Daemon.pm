@@ -5,7 +5,7 @@ use vars qw($VERSION @ISA $PROTO $DEBUG);
 
 $VERSION = "6.00";
 
-use IO::Socket qw(AF_INET INADDR_ANY inet_ntoa);
+use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 @ISA=qw(IO::Socket::INET);
 
 $PROTO = "HTTP/1.1";
@@ -43,6 +43,9 @@ sub url
     if (!$addr || $addr eq INADDR_ANY) {
  	require Sys::Hostname;
  	$url .= lc Sys::Hostname::hostname();
+    }
+    elsif ($addr eq INADDR_LOOPBACK) {
+	$url .= inet_ntoa($addr);
     }
     else {
 	$url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
