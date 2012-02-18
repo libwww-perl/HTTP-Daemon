@@ -22,7 +22,7 @@ WriteMakefile(
     },
     META_MERGE => {
 	resources => {
-            repository => 'http://github.com/gisle/libwww-perl',
+            repository => 'http://github.com/gisle/http-daemon',
 	    MailingList => 'mailto:libwww@perl.org',
         }
     },
