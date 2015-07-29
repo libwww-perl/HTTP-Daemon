@@ -158,7 +158,7 @@ if ($pid = fork) {
 } else {
   die "cannot fork: $!" unless defined $pid;
   my $d = HTTP::Daemon->new(
-                            LocalAddr => '0.0.0.0',
+                            LocalAddr => '127.0.0.1',
                             LocalPort => $tport,
                             ReuseAddr => 1,
                            ) or die;
