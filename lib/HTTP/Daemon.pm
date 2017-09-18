@@ -22,6 +22,14 @@ sub new {
     my ($class, %args) = @_;
     $args{Listen} ||= 5;
     $args{Proto}  ||= 'tcp';
+
+    # Handle undefined or empty local address the same way as
+    # IO::Socket::INET -- use unspecified address
+    for my $key (qw(LocalAddr LocalHost)) {
+        if (exists $args{$key} && (!defined $args{$key} || $args{$key} eq '')) {
+            delete $args{$key};
+        }
+    }
     return $class->SUPER::new(%args);
 }
 
