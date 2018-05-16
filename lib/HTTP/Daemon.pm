@@ -1,9 +1,10 @@
 package HTTP::Daemon;
+# ABSTRACT: A simple http server class
 
 use strict;
 use warnings;
 
-our $VERSION = "6.01";
+our $VERSION = '6.02';
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 our @ISA = qw(IO::Socket::INET);
@@ -618,10 +619,6 @@ sub daemon
 1;
 
 __END__
-
-=head1 NAME
-
-HTTP::Daemon - a simple http server class
 
 =head1 SYNOPSIS
 
