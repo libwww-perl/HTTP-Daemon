@@ -1,9 +1,10 @@
-Makefile
-Makefile.old
-blib
-pm_to_blib
+/.ackrc
+/.build/
+!/.gitignore
+/.latest
+/HTTP-Daemon-*/
+/HTTP-Daemon-*.tar.gz
 SSL
 t/CAN_TALK_TO_OURSELF
 t/live/ENABLED
-*.tar.gz
 xx*

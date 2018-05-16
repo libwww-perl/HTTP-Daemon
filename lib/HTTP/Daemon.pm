@@ -76,7 +76,8 @@ sub product_tokens
 
 
 
-package HTTP::Daemon::ClientConn;
+package  # hide from PAUSE
+    HTTP::Daemon::ClientConn;
 use strict;
 use warnings;
 
@@ -897,10 +898,4 @@ RFC 2616
 
 L<IO::Socket::INET>, L<IO::Socket>
 
-=head1 COPYRIGHT
-
-Copyright 1996-2003, Gisle Aas
-
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
+=cut
