@@ -1,15 +1,16 @@
 package HTTP::Daemon;
 
 use strict;
-use vars qw($VERSION @ISA $PROTO $DEBUG);
+use warnings;
 
-$VERSION = "6.01";
+our $VERSION = "6.01";
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
-@ISA=qw(IO::Socket::INET);
+our @ISA = qw(IO::Socket::INET);
 
-$PROTO = "HTTP/1.1";
+our $PROTO = "HTTP/1.1";
 
+our $DEBUG;
 
 sub new
 {
@@ -75,10 +76,12 @@ sub product_tokens
 
 
 package HTTP::Daemon::ClientConn;
+use strict;
+use warnings;
 
-use vars qw(@ISA $DEBUG);
 use IO::Socket ();
-@ISA=qw(IO::Socket::INET);
+our @ISA = qw(IO::Socket::INET);
+our $DEBUG;
 *DEBUG = \$HTTP::Daemon::DEBUG;
 
 use HTTP::Request  ();
