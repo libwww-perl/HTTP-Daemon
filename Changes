@@ -1,6 +1,8 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Delimit IPv6 numeric address with brackets and URI-quote an IPv6 zone
+    separator in url() method output
   - Handle undef and empty LocalAddr value in new() constructor as an
     unspecified address (GH#24, RT#123069)
 

@@ -62,6 +62,20 @@ sub url {
     }
     else {
         my $host = $self->sockhostname;
+
+        # sockhostname() seems to return a stringified IP address if not
+        # resolvable. Then quote it for a port separator and an IPv6 zone
+        # separator. But be paranoid for a case when it already contains
+        # a bracket.
+        if (defined $host and $host =~ /:/) {
+            if ($host =~ /[\[\]]/) {
+                $host = undef;
+            }
+            else {
+                $host =~ s/%/%25/g;
+                $host = '[' . $host . ']';
+            }
+        }
         if (!defined $host) {
             my $family = sockaddr_family($self->sockname);
             if ($family && $family == AF_INET6) {
