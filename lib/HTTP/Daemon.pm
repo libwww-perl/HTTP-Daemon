@@ -4,7 +4,7 @@ package HTTP::Daemon;
 use strict;
 use warnings;
 
-our $VERSION = '6.02';
+our $VERSION = '6.03';
 
 use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
 our @ISA = qw(IO::Socket::INET);
