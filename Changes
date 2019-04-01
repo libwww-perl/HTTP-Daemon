@@ -1,6 +1,6 @@
 Revision history for HTTP-Daemon
 
-{{$NEXT}}
+6.03      2019-04-01 20:56:38Z
   - Remove circular dependency with LWP::UserAgent introduced in 6.02 (GH#27)
     (Olaf Alders)
 
