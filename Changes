@@ -1,6 +1,8 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Remove circular dependency on LWP::RobotUA introduced in 6.02 (GH#29)
+    (Olaf Alders)
 
 6.03      2019-04-01 20:56:38Z
   - Remove circular dependency with LWP::UserAgent introduced in 6.02 (GH#27)
