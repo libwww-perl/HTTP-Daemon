@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.03
+version 6.04
 
 =head1 SYNOPSIS
 
@@ -303,7 +303,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Ville Skyttä Mark Stosberg Olaf Alders Slaven Rezic Karen Etheridge Zefram Tom Hukins Chase Whitener Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
+=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Slaven Rezic Karen Etheridge Zefram Tom Hukins Chase Whitener Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
 
 =over 4
 
@@ -313,11 +313,11 @@ Ville Skyttä <ville.skytta@iki.fi>
 
 =item *
 
-Mark Stosberg <MARKSTOS@cpan.org>
+Olaf Alders <olaf@wundersolutions.com>
 
 =item *
 
-Olaf Alders <olaf@wundersolutions.com>
+Mark Stosberg <MARKSTOS@cpan.org>
 
 =item *
 

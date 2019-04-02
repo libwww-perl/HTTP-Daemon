@@ -1,6 +1,6 @@
 Revision history for HTTP-Daemon
 
-{{$NEXT}}
+6.04      2019-04-02 13:09:45Z
   - Remove circular dependency on LWP::RobotUA introduced in 6.02 (GH#29)
     (Olaf Alders)
 
