@@ -107,8 +107,8 @@ sub get_request
     }
 
     $self->reason("");
-    my $buf = ${*$self}{'httpd_rbuf'};
-    $buf = "" unless defined $buf;
+    my $buf = \${*$self}{'httpd_rbuf'};
+    $$buf = "" unless defined $$buf;
 
     my $timeout = $ {*$self}{'io_socket_timeout'};
     my $fdset = "";
@@ -118,13 +118,13 @@ sub get_request
   READ_HEADER:
     while (1) {
 	# loop until we have the whole header in $buf
-	$buf =~ s/^(?:\015?\012)+//;  # ignore leading blank lines
-	if ($buf =~ /\012/) {  # potential, has at least one line
-	    if ($buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
-		if ($buf =~ /\015?\012\015?\012/) {
+	$$buf =~ s/^(?:\015?\012)+//;  # ignore leading blank lines
+	if ($$buf =~ /\012/) {  # potential, has at least one line
+	    if ($$buf =~ /^\w+[^\012]+HTTP\/\d+\.\d+\015?\012/) {
+		if ($$buf =~ /\015?\012\015?\012/) {
 		    last READ_HEADER;  # we have it
 		}
-		elsif (length($buf) > 16*1024) {
+		elsif (length($$buf) > 16*1024) {
 		    $self->send_error(413); # REQUEST_ENTITY_TOO_LARGE
 		    $self->reason("Very long header");
 		    return;
@@ -134,18 +134,19 @@ sub get_request
 		last READ_HEADER;  # HTTP/0.9 client
 	    }
 	}
-	elsif (length($buf) > 16*1024) {
+	elsif (length($$buf) > 16*1024) {
 	    $self->send_error(414); # REQUEST_URI_TOO_LARGE
 	    $self->reason("Very long first line");
 	    return;
 	}
 	print STDERR "Need more data for complete header\n" if $DEBUG;
-	return unless $self->_need_more($buf, $timeout, $fdset);
+        my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+	return $got_more unless $got_more;
     }
-    if ($buf !~ s/^(\S+)[ \t]+(\S+)(?:[ \t]+(HTTP\/\d+\.\d+))?[^\012]*\012//) {
+    if ($$buf !~ s/^(\S+)[ \t]+(\S+)(?:[ \t]+(HTTP\/\d+\.\d+))?[^\012]*\012//) {
 	${*$self}{'httpd_client_proto'} = _http_version("HTTP/1.0");
 	$self->send_error(400);  # BAD_REQUEST
-	$self->reason("Bad request line: $buf");
+	$self->reason("Bad request line: $$buf");
 	return;
     }
     my $method = $1;
@@ -162,7 +163,7 @@ sub get_request
 	# we expect to find some headers
 	my($key, $val);
       HEADER:
-	while ($buf =~ s/^([^\012]*)\012//) {
+	while ($$buf =~ s/^([^\012]*)\012//) {
 	    $_ = $1;
 	    s/\015$//;
 	    if (/^([^:\s]+)\s*:\s*(.*)/) {
@@ -189,7 +190,7 @@ sub get_request
     }
 
     if ($only_headers) {
-	${*$self}{'httpd_rbuf'} = $buf;
+	${*$self}{'httpd_rbuf'} = $$buf;
         return $r;
     }
 
@@ -217,7 +218,7 @@ sub get_request
       CHUNK:
 	while (1) {
 	    print STDERR "Chunked\n" if $DEBUG;
-	    if ($buf =~ s/^([^\012]*)\012//) {
+	    if ($$buf =~ s/^([^\012]*)\012//) {
 		my $chunk_head = $1;
 		unless ($chunk_head =~ /^([0-9A-Fa-f]+)/) {
 		    $self->send_error(400);
@@ -227,21 +228,22 @@ sub get_request
 		my $size = hex($1);
 		last CHUNK if $size == 0;
 
-		my $missing = $size - length($buf) + 2; # 2=CRLF at chunk end
+		my $missing = $size - length($$buf) + 2; # 2=CRLF at chunk end
 		# must read until we have a complete chunk
 		while ($missing > 0) {
 		    print STDERR "Need $missing more bytes\n" if $DEBUG;
-		    my $n = $self->_need_more($buf, $timeout, $fdset);
-		    return unless $n;
-		    $missing -= $n;
+		    my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+		    return $got_more unless $got_more;
+		    $missing -= $got_more;
 		}
-		$body .= substr($buf, 0, $size);
-		substr($buf, 0, $size+2) = '';
+		$body .= substr($$buf, 0, $size);
+		substr($$buf, 0, $size+2) = '';
 
 	    }
 	    else {
 		# need more data in order to have a complete chunk header
-		return unless $self->_need_more($buf, $timeout, $fdset);
+		my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+		return $got_more unless $got_more;
 	    }
 	}
 	$r->content($body);
@@ -253,12 +255,13 @@ sub get_request
 	my($key, $val);
       FOOTER:
 	while (1) {
-	    if ($buf !~ /\012/) {
+	    if ($$buf !~ /\012/) {
 		# need at least one line to look at
-		return unless $self->_need_more($buf, $timeout, $fdset);
+		my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+		return $got_more unless $got_more;
 	    }
 	    else {
-		$buf =~ s/^([^\012]*)\012//;
+		$$buf =~ s/^([^\012]*)\012//;
 		$_ = $1;
 		s/\015$//;
 		if (/^([\w\-]+)\s*:\s*(.*)/) {
@@ -288,20 +291,20 @@ sub get_request
     }
     elsif ($len) {
 	# Plain body specified by "Content-Length"
-	my $missing = $len - length($buf);
+	my $missing = $len - length($$buf);
 	while ($missing > 0) {
 	    print "Need $missing more bytes of content\n" if $DEBUG;
-	    my $n = $self->_need_more($buf, $timeout, $fdset);
-	    return unless $n;
-	    $missing -= $n;
+            my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+            return $got_more unless $got_more;
+	    $missing -= $got_more;
 	}
-	if (length($buf) > $len) {
-	    $r->content(substr($buf,0,$len));
-	    substr($buf, 0, $len) = '';
+	if (length($$buf) > $len) {
+	    $r->content(substr($$buf,0,$len));
+	    substr($$buf, 0, $len) = '';
 	}
 	else {
-	    $r->content($buf);
-	    $buf='';
+	    $r->content($$buf);
+	    $$buf='';
 	}
     }
     elsif ($ct && $ct =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i) {
@@ -309,17 +312,17 @@ sub get_request
 	my $boundary = "$CRLF--$2--";
 	my $index;
 	while (1) {
-	    $index = index($buf, $boundary);
+	    $index = index($$buf, $boundary);
 	    last if $index >= 0;
 	    # end marker not yet found
-	    return unless $self->_need_more($buf, $timeout, $fdset);
+            my $got_more = $self->_need_more($$buf, $timeout, $fdset);
+            return $got_more unless $got_more;
 	}
 	$index += length($boundary);
-	$r->content(substr($buf, 0, $index));
-	substr($buf, 0, $index) = '';
+	$r->content(substr($$buf, 0, $index));
+	substr($$buf, 0, $index) = '';
 
     }
-    ${*$self}{'httpd_rbuf'} = $buf;
 
     $r;
 }
@@ -335,12 +338,14 @@ sub _need_more
 	my $n = select($fdset,undef,undef,$timeout);
 	unless ($n) {
 	    $self->reason(defined($n) ? "Timeout" : "select: $!");
+	    return 0 if defined($n);  # Recoverable: return defined false
 	    return;
 	}
     }
     print STDERR "sysread()\n" if $DEBUG;
     my $n = sysread($self, $_[0], 2048, length($_[0]));
     $self->reason(defined($n) ? "Client closed" : "sysread: $!") unless $n;
+    return unless $n;
     $n;
 }
 
@@ -733,11 +738,13 @@ of C<HTTP::Daemon>.  The following methods are provided:
 =item $c->get_request( $headers_only )
 
 This method reads data from the client and turns it into an
-C<HTTP::Request> object which is returned.  It returns C<undef>
-if reading fails.  If it fails, then the C<HTTP::Daemon::ClientConn>
-object ($c) should be discarded, and you should not try call this
-method again on it.  The $c->reason method might give you some
-information about why $c->get_request failed.
+C<HTTP::Request> object which is returned.  It returns a false, but
+defined, value if it failed because of a read timeout; in this case,
+repeated calls to $c->get_request may eventually succeed.
+It returns undef it it fails because of another reason; in this case,
+the C<HTTP::Daemon::ClientConn> object ($c) should be discarded, and you
+should not try call this method again on it.  The $c->reason method
+might give you some information about why $c->get_request failed.
 
 The get_request() method will normally not return until the whole
 request has been received from the client.  This might not be what you
@@ -758,7 +765,7 @@ Bytes read by $c->get_request, but not used are placed in the I<read
 buffer>.  The next time $c->get_request is called it will consume the
 bytes in this buffer before reading more data from the network
 connection itself.  The read buffer is invalid after $c->get_request
-has failed.
+has failed, except for time outs.
 
 If you handle the reading of the request content yourself you need to
 empty this buffer before you read more and you need to place
