@@ -1,6 +1,11 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Added the .perltidyrc from the libwww-perl distribution
+  - Tidied the test suite with perltidy
+  - Tidied Daemon.pm
+  - Turned on EOL and tab tests
+  - Removed obvious indirect object syntax in test suite
 
 6.04      2019-04-02 13:09:45Z
   - Remove circular dependency on LWP::RobotUA introduced in 6.02 (GH#29)
