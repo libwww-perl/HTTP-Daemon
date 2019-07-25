@@ -7,8 +7,12 @@ use warnings;
 
 our $VERSION = '6.05';
 
-use IO::Socket qw(AF_INET INADDR_ANY INADDR_LOOPBACK inet_ntoa);
-our @ISA = qw(IO::Socket::INET);
+use Socket qw(
+    AF_INET AF_INET6 INADDR_ANY IN6ADDR_ANY INADDR_LOOPBACK IN6ADDR_LOOPBACK
+    inet_ntop sockaddr_family
+);
+use IO::Socket::IP;
+our @ISA = qw(IO::Socket::IP);
 
 our $PROTO = "HTTP/1.1";
 
@@ -38,15 +42,27 @@ sub url {
     my $self = shift;
     my $url  = $self->_default_scheme . "://";
     my $addr = $self->sockaddr;
-    if (!$addr || $addr eq INADDR_ANY) {
+    if (!$addr || $addr eq INADDR_ANY || $addr eq IN6ADDR_ANY) {
         require Sys::Hostname;
         $url .= lc Sys::Hostname::hostname();
     }
     elsif ($addr eq INADDR_LOOPBACK) {
-        $url .= inet_ntoa($addr);
+        $url .= inet_ntop(AF_INET, $addr);
+    }
+    elsif ($addr eq IN6ADDR_LOOPBACK) {
+        $url .= '[' . inet_ntop(AF_INET6, $addr) . ']';
     }
     else {
-        $url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
+        my $host = $addr->sockhostname;
+        if (!defined $host) {
+            if (sockaddr_family($addr) eq AF_INET6) {
+                $host = '[' . inet_ntop(AF_INET6, $addr) . ']';
+            }
+            else {
+                $host = inet_ntop(AF_INET6, $addr);
+            }
+        }
+        $url .= $host;
     }
     my $port = $self->sockport;
     $url .= ":$port" if $port != $self->_default_port;
@@ -72,8 +88,8 @@ package    # hide from PAUSE
 use strict;
 use warnings;
 
-use IO::Socket ();
-our @ISA = qw(IO::Socket::INET);
+use IO::Socket::IP ();
+our @ISA = qw(IO::Socket::IP);
 our $DEBUG;
 *DEBUG = \$HTTP::Daemon::DEBUG;
 
@@ -613,12 +629,12 @@ __END__
 
 Instances of the C<HTTP::Daemon> class are HTTP/1.1 servers that
 listen on a socket for incoming requests. The C<HTTP::Daemon> is a
-subclass of C<IO::Socket::INET>, so you can perform socket operations
+subclass of C<IO::Socket::IP>, so you can perform socket operations
 directly on it too.
 
 The accept() method will return when a connection from a client is
 available.  The returned value will be an C<HTTP::Daemon::ClientConn>
-object which is another C<IO::Socket::INET> subclass.  Calling the
+object which is another C<IO::Socket::IP> subclass.  Calling the
 get_request() method on this object will read data from the client and
 return an C<HTTP::Request> object.  The ClientConn object also provide
 methods to send back various responses.
@@ -629,7 +645,7 @@ desirable.  Also note that the user is responsible for generating
 responses that conform to the HTTP/1.1 protocol.
 
 The following methods of C<HTTP::Daemon> are new (or enhanced) relative
-to the C<IO::Socket::INET> base class:
+to the C<IO::Socket::IP> base class:
 
 =over 4
 
@@ -638,7 +654,7 @@ to the C<IO::Socket::INET> base class:
 =item $d = HTTP::Daemon->new( %opts )
 
 The constructor method takes the same arguments as the
-C<IO::Socket::INET> constructor, but unlike its base class it can also
+C<IO::Socket::IP> constructor, but unlike its base class it can also
 be called without any arguments.  The daemon will then set up a listen
 queue of 5 connections and allocate some random port number.
 
@@ -650,7 +666,7 @@ HTTP port will be constructed like this:
            LocalPort => 80,
        );
 
-See L<IO::Socket::INET> for a description of other arguments that can
+See L<IO::Socket::IP> for a description of other arguments that can
 be used configure the daemon during construction.
 
 =item $c = $d->accept
@@ -667,7 +683,7 @@ class a subclass of C<HTTP::Daemon::ClientConn>.
 
 The accept method will return C<undef> if timeouts have been enabled
 and no connection is made within the given time.  The timeout() method
-is described in L<IO::Socket>.
+is described in L<IO::Socket::IP>.
 
 In list context both the client object and the peer address will be
 returned; see the description of the accept method L<IO::Socket> for
@@ -689,7 +705,7 @@ replaced with the version number of this module.
 
 =back
 
-The C<HTTP::Daemon::ClientConn> is a C<IO::Socket::INET>
+The C<HTTP::Daemon::ClientConn> is a C<IO::Socket::IP>
 subclass. Instances of this class are returned by the accept() method
 of C<HTTP::Daemon>.  The following methods are provided:
 
@@ -863,6 +879,6 @@ Return a reference to the corresponding C<HTTP::Daemon> object.
 
 RFC 2616
 
-L<IO::Socket::INET>, L<IO::Socket>
+L<IO::Socket::IP>, L<IO::Socket>
 
 =cut
