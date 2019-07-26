@@ -55,11 +55,15 @@ sub url {
     else {
         my $host = $self->sockhostname;
         if (!defined $host) {
-            if (sockaddr_family($addr) eq AF_INET6) {
+            my $family = sockaddr_family($self->sockname);
+            if ($family && $family == AF_INET6) {
                 $host = '[' . inet_ntop(AF_INET6, $addr) . ']';
             }
+            elsif ($family && $family == AF_INET) {
+                $host = inet_ntop(AF_INET, $addr);
+            }
             else {
-                $host = inet_ntop(AF_INET6, $addr);
+                die "Unknown family";
             }
         }
         $url .= $host;
