@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.04
+version 6.05
 
 =head1 SYNOPSIS
 
@@ -35,12 +35,12 @@ version 6.04
 
 Instances of the C<HTTP::Daemon> class are HTTP/1.1 servers that
 listen on a socket for incoming requests. The C<HTTP::Daemon> is a
-subclass of C<IO::Socket::INET>, so you can perform socket operations
+subclass of C<IO::Socket::IP>, so you can perform socket operations
 directly on it too.
 
 The accept() method will return when a connection from a client is
 available.  The returned value will be an C<HTTP::Daemon::ClientConn>
-object which is another C<IO::Socket::INET> subclass.  Calling the
+object which is another C<IO::Socket::IP> subclass.  Calling the
 get_request() method on this object will read data from the client and
 return an C<HTTP::Request> object.  The ClientConn object also provide
 methods to send back various responses.
@@ -51,7 +51,7 @@ desirable.  Also note that the user is responsible for generating
 responses that conform to the HTTP/1.1 protocol.
 
 The following methods of C<HTTP::Daemon> are new (or enhanced) relative
-to the C<IO::Socket::INET> base class:
+to the C<IO::Socket::IP> base class:
 
 =over 4
 
@@ -60,7 +60,7 @@ to the C<IO::Socket::INET> base class:
 =item $d = HTTP::Daemon->new( %opts )
 
 The constructor method takes the same arguments as the
-C<IO::Socket::INET> constructor, but unlike its base class it can also
+C<IO::Socket::IP> constructor, but unlike its base class it can also
 be called without any arguments.  The daemon will then set up a listen
 queue of 5 connections and allocate some random port number.
 
@@ -72,7 +72,7 @@ HTTP port will be constructed like this:
            LocalPort => 80,
        );
 
-See L<IO::Socket::INET> for a description of other arguments that can
+See L<IO::Socket::IP> for a description of other arguments that can
 be used configure the daemon during construction.
 
 =item $c = $d->accept
@@ -89,7 +89,7 @@ class a subclass of C<HTTP::Daemon::ClientConn>.
 
 The accept method will return C<undef> if timeouts have been enabled
 and no connection is made within the given time.  The timeout() method
-is described in L<IO::Socket>.
+is described in L<IO::Socket::IP>.
 
 In list context both the client object and the peer address will be
 returned; see the description of the accept method L<IO::Socket> for
@@ -111,7 +111,7 @@ replaced with the version number of this module.
 
 =back
 
-The C<HTTP::Daemon::ClientConn> is a C<IO::Socket::INET>
+The C<HTTP::Daemon::ClientConn> is a C<IO::Socket::IP>
 subclass. Instances of this class are returned by the accept() method
 of C<HTTP::Daemon>.  The following methods are provided:
 
@@ -285,7 +285,7 @@ Return a reference to the corresponding C<HTTP::Daemon> object.
 
 RFC 2616
 
-L<IO::Socket::INET>, L<IO::Socket>
+L<IO::Socket::IP>, L<IO::Socket>
 
 =head1 SUPPORT
 
@@ -303,7 +303,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Slaven Rezic Karen Etheridge Zefram Tom Hukins Chase Whitener Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
+=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Karen Etheridge Chase Whitener Slaven Rezic Zefram Tom Hukins Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
 
 =over 4
 
@@ -321,11 +321,15 @@ Mark Stosberg <MARKSTOS@cpan.org>
 
 =item *
 
-Slaven Rezic <slaven@rezic.de>
+Karen Etheridge <ether@cpan.org>
 
 =item *
 
-Karen Etheridge <ether@cpan.org>
+Chase Whitener <capoeirab@cpan.org>
+
+=item *
+
+Slaven Rezic <slaven@rezic.de>
 
 =item *
 
@@ -334,10 +338,6 @@ Zefram <zefram@fysh.org>
 =item *
 
 Tom Hukins <tom@eborcom.com>
-
-=item *
-
-Chase Whitener <capoeirab@cpan.org>
 
 =item *
 
