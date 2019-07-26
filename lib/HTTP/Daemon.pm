@@ -5,7 +5,7 @@ package HTTP::Daemon;
 use strict;
 use warnings;
 
-our $VERSION = '6.05';
+our $VERSION = '6.06';
 
 use Socket qw(
     AF_INET AF_INET6 INADDR_ANY IN6ADDR_ANY INADDR_LOOPBACK IN6ADDR_LOOPBACK
