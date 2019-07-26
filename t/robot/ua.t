@@ -11,7 +11,7 @@ unless (-f "CAN_TALK_TO_OURSELF") {
 }
 
 $| = 1;               # autoflush
-require IO::Socket;   # make sure this work before we try to make a HTTP::Daemon
+require IO::Socket::IP;   # make sure this work before we try to make a HTTP::Daemon
 
 # First we make ourself a daemon in another process
 my $D = shift || '';
