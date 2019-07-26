@@ -53,7 +53,7 @@ sub url {
         $url .= '[' . inet_ntop(AF_INET6, $addr) . ']';
     }
     else {
-        my $host = $addr->sockhostname;
+        my $host = $self->sockhostname;
         if (!defined $host) {
             if (sockaddr_family($addr) eq AF_INET6) {
                 $host = '[' . inet_ntop(AF_INET6, $addr) . ']';
