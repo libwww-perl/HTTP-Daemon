@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.05
+version 6.06
 
 =head1 SYNOPSIS
 
@@ -303,7 +303,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Karen Etheridge Chase Whitener Slaven Rezic Zefram Tom Hukins Mike Schilli Alexey Tourbin Bron Gondwana Hans-H. Froehlich Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson
+=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Karen Etheridge Chase Whitener Slaven Rezic Zefram Alexey Tourbin Bron Gondwana Petr Písař Mike Schilli Tom Hukins Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Gavin Peters Graeme Thompson Hans-H. Froehlich
 
 =over 4
 
@@ -337,14 +337,6 @@ Zefram <zefram@fysh.org>
 
 =item *
 
-Tom Hukins <tom@eborcom.com>
-
-=item *
-
-Mike Schilli <mschilli@yahoo-inc.com>
-
-=item *
-
 Alexey Tourbin <at@altlinux.ru>
 
 =item *
@@ -353,7 +345,15 @@ Bron Gondwana <brong@fastmail.fm>
 
 =item *
 
-Hans-H. Froehlich <hfroehlich@co-de-co.de>
+Petr Písař <ppisar@redhat.com>
+
+=item *
+
+Mike Schilli <mschilli@yahoo-inc.com>
+
+=item *
+
+Tom Hukins <tom@eborcom.com>
 
 =item *
 
@@ -486,6 +486,10 @@ Gavin Peters <gpeters@deepsky.com>
 =item *
 
 Graeme Thompson <Graeme.Thompson@mobilecohesion.com>
+
+=item *
+
+Hans-H. Froehlich <hfroehlich@co-de-co.de>
 
 =back
 

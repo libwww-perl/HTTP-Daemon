@@ -1,6 +1,6 @@
 Revision history for HTTP-Daemon
 
-{{$NEXT}}
+6.06      2019-08-29 14:23:17Z
   - Delimit IPv6 numeric address with brackets and URI-quote an IPv6 zone
     separator in url() method output (GH#32) (Petr Pisar)
   - Handle undef and empty LocalAddr value in new() constructor as an
