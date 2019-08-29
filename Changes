@@ -2,9 +2,10 @@ Revision history for HTTP-Daemon
 
 {{$NEXT}}
   - Delimit IPv6 numeric address with brackets and URI-quote an IPv6 zone
-    separator in url() method output
+    separator in url() method output (GH#32) (Petr Pisar)
   - Handle undef and empty LocalAddr value in new() constructor as an
-    unspecified address (GH#24, RT#123069)
+    unspecified address (GH#24, RT#123069) (Petr Pisar)
+  - Use IO::Socket::IP for IPv6 support. (GH#31) (Chase Whitener)
 
 6.05      2019-07-26 20:41:05Z
   - Added the .perltidyrc from the libwww-perl distribution
