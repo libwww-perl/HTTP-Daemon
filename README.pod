@@ -19,13 +19,13 @@ version 6.06
   print "Please contact me at: <URL:", $d->url, ">\n";
   while (my $c = $d->accept) {
       while (my $r = $c->get_request) {
-	  if ($r->method eq 'GET' and $r->uri->path eq "/xyzzy") {
+          if ($r->method eq 'GET' and $r->uri->path eq "/xyzzy") {
               # remember, this is *not* recommended practice :-)
-	      $c->send_file_response("/etc/passwd");
-	  }
-	  else {
-	      $c->send_error(RC_FORBIDDEN)
-	  }
+              $c->send_file_response("/etc/passwd");
+          }
+          else {
+              $c->send_error(RC_FORBIDDEN)
+          }
       }
       $c->close;
       undef($c);
@@ -289,7 +289,7 @@ L<IO::Socket::IP>, L<IO::Socket>
 
 =head1 SUPPORT
 
-bugs may be submitted through L<https://github.com/libwww-perl/HTTP-Daemon/issues>.
+Bugs may be submitted through L<https://github.com/libwww-perl/HTTP-Daemon/issues>.
 
 There is also a mailing list available for users of this distribution, at
 L<mailto:libwww@perl.org>.
