@@ -7,10 +7,7 @@ use warnings;
 
 our $VERSION = '6.07';
 
-use Socket qw(
-    AF_INET AF_INET6 INADDR_ANY IN6ADDR_ANY INADDR_LOOPBACK IN6ADDR_LOOPBACK
-    inet_ntop sockaddr_family
-);
+use Socket ();
 use IO::Socket::IP;
 our @ISA = qw(IO::Socket::IP);
 
@@ -48,48 +45,13 @@ sub accept {
 
 sub url {
     my $self = shift;
-    my $url  = $self->_default_scheme . "://";
-    my $addr = $self->sockaddr;
-    if (!$addr || $addr eq INADDR_ANY || $addr eq IN6ADDR_ANY) {
-        require Sys::Hostname;
-        $url .= lc Sys::Hostname::hostname();
-    }
-    elsif ($addr eq INADDR_LOOPBACK) {
-        $url .= inet_ntop(AF_INET, $addr);
-    }
-    elsif ($addr eq IN6ADDR_LOOPBACK) {
-        $url .= '[' . inet_ntop(AF_INET6, $addr) . ']';
-    }
-    else {
-        my $host = $self->sockhostname;
 
-        # sockhostname() seems to return a stringified IP address if not
-        # resolvable. Then quote it for a port separator and an IPv6 zone
-        # separator. But be paranoid for a case when it already contains
-        # a bracket.
-        if (defined $host and $host =~ /:/) {
-            if ($host =~ /[\[\]]/) {
-                $host = undef;
-            }
-            else {
-                $host =~ s/%/%25/g;
-                $host = '[' . $host . ']';
-            }
-        }
-        if (!defined $host) {
-            my $family = sockaddr_family($self->sockname);
-            if ($family && $family == AF_INET6) {
-                $host = '[' . inet_ntop(AF_INET6, $addr) . ']';
-            }
-            elsif ($family && $family == AF_INET) {
-                $host = inet_ntop(AF_INET, $addr);
-            }
-            else {
-                die "Unknown family";
-            }
-        }
-        $url .= $host;
-    }
+    my $host = $self->sockhost;
+    $host = "127.0.0.1" if $host eq "0.0.0.0";
+    $host = "::1"       if $host eq "::";
+    $host = "[$host]"   if $self->sockdomain == Socket::AF_INET6;
+
+    my $url = $self->_default_scheme . "://" . $host;
     my $port = $self->sockport;
     $url .= ":$port" if $port != $self->_default_port;
     $url .= "/";
