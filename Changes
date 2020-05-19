@@ -1,6 +1,7 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Prefer IP address for host in $d->url (GH#40) (Shoichi Kaji)
   - Improve documentation readability (GH#36) (Ferenc Erki)
 
 6.06      2019-08-29 14:23:17Z
