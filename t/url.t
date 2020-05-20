@@ -6,7 +6,7 @@ use Test::More 0.98;
 use Config;
 use HTTP::Daemon;
 use HTTP::Response;
-use HTTP::Tiny;
+use HTTP::Tiny 0.042;
 
 my $can_fork
     = $Config{d_fork}
