@@ -1,6 +1,7 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Use HTTP::Tiny 0.042+ for IPv6 support (GH#41) (Shoichi Kaji)
 
 6.07      2020-05-19 19:19:53Z (TRIAL RELEASE)
   - Prefer IP address for host in $d->url (GH#40) (Shoichi Kaji)
