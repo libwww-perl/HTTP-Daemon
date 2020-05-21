@@ -1,6 +1,7 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - In t/chunked.t, leave choosing IP address family to IO::Socket::IP (GH#42) (Shoichi Kaji)
 
 6.07      2020-05-19 19:19:53Z (TRIAL RELEASE)
   - Prefer IP address for host in $d->url (GH#40) (Shoichi Kaji)
