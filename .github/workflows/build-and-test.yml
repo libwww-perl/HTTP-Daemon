@@ -129,7 +129,7 @@ jobs:
         uses: perl-actions/install-with-cpm@v1.3
         with:
           cpanfile: "cpanfile"
-          args: "--with-develop --with-recommends --with-suggests --with-test"
+          args: "--with-recommends --with-suggests --with-test"
           sudo: false
       - run: prove -l t xt
         env:
