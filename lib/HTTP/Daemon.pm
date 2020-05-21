@@ -620,6 +620,10 @@ listen on a socket for incoming requests. The C<HTTP::Daemon> is a
 subclass of C<IO::Socket::IP>, so you can perform socket operations
 directly on it too.
 
+Please note that C<HTTP::Daemon> used to be a subclass of C<IO::Socket::INET>.
+To support IPv6, it switched the parent class to C<IO::Socket::IP> at version 6.05.
+See L</IPv6 SUPPORT> for details.
+
 The accept() method will return when a connection from a client is
 available.  The returned value will be an C<HTTP::Daemon::ClientConn>
 object which is another C<IO::Socket::IP> subclass.  Calling the
@@ -862,6 +866,19 @@ or glob.
 Return a reference to the corresponding C<HTTP::Daemon> object.
 
 =back
+
+=head1 IPv6 SUPPORT
+
+Since version 6.05, C<HTTP::Daemon> is a subclass of C<IO::Socket::IP>
+rather than C<IO::Socket::INET>, so that it supports IPv6.
+
+For some reasons, you may want to force C<HTTP::Daemon> to listen on IPv4 addresses only.
+Then pass C<Family> argument to C<< HTTP::Daemon->new >>:
+
+  use HTTP::Daemon;
+  use Socket 'AF_INET';
+
+  my $d = HTTP::Daemon->new(Family => AF_INET);
 
 =head1 SEE ALSO
 
