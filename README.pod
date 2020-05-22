@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.07
+version 6.08
 
 =head1 SYNOPSIS
 
@@ -37,6 +37,10 @@ Instances of the C<HTTP::Daemon> class are HTTP/1.1 servers that
 listen on a socket for incoming requests. The C<HTTP::Daemon> is a
 subclass of C<IO::Socket::IP>, so you can perform socket operations
 directly on it too.
+
+Please note that C<HTTP::Daemon> used to be a subclass of C<IO::Socket::INET>.
+To support IPv6, it switched the parent class to C<IO::Socket::IP> at version 6.05.
+See L</IPv6 SUPPORT> for details.
 
 The accept() method will return when a connection from a client is
 available.  The returned value will be an C<HTTP::Daemon::ClientConn>
@@ -281,6 +285,19 @@ Return a reference to the corresponding C<HTTP::Daemon> object.
 
 =back
 
+=head1 IPv6 SUPPORT
+
+Since version 6.05, C<HTTP::Daemon> is a subclass of C<IO::Socket::IP>
+rather than C<IO::Socket::INET>, so that it supports IPv6.
+
+For some reasons, you may want to force C<HTTP::Daemon> to listen on IPv4 addresses only.
+Then pass C<Family> argument to C<< HTTP::Daemon->new >>:
+
+  use HTTP::Daemon;
+  use Socket 'AF_INET';
+
+  my $d = HTTP::Daemon->new(Family => AF_INET);
+
 =head1 SEE ALSO
 
 RFC 2616
@@ -303,7 +320,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Karen Etheridge Chase Whitener Slaven Rezic Shoichi Kaji Zefram Bron Gondwana Petr Písař Tom Hukins Mike Schilli Alexey Tourbin Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Ferenc Erki Gavin Peters Graeme Thompson Hans-H. Froehlich
+=for stopwords Ville Skyttä Olaf Alders Mark Stosberg Karen Etheridge Shoichi Kaji Chase Whitener Slaven Rezic Zefram Bron Gondwana Petr Písař Tom Hukins Mike Schilli Alexey Tourbin Ian Kilgore Jacob J Ondrej Hanak Perlover Peter Rabbitson Robert Stone Rolf Grossmann Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban amire80 jefflee john9art murphy phrstbrn ruff Adam Kennedy sasao Sjogren Alex Kapranoff Andreas J. Koenig Bill Mann DAVIDRW Daniel Hedlund David E. Wheeler FWILES Father Chrysostomos Ferenc Erki Gavin Peters Graeme Thompson Hans-H. Froehlich
 
 =over 4
 
@@ -325,15 +342,15 @@ Karen Etheridge <ether@cpan.org>
 
 =item *
 
+Shoichi Kaji <skaji@cpan.org>
+
+=item *
+
 Chase Whitener <capoeirab@cpan.org>
 
 =item *
 
 Slaven Rezic <slaven@rezic.de>
-
-=item *
-
-Shoichi Kaji <skaji@cpan.org>
 
 =item *
 
