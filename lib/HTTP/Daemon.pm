@@ -5,7 +5,7 @@ package HTTP::Daemon;
 use strict;
 use warnings;
 
-our $VERSION = '6.08';
+our $VERSION = '6.09';
 
 use Socket ();
 use IO::Socket::IP;

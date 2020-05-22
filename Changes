@@ -1,5 +1,7 @@
 Revision history for HTTP-Daemon
 
+{{$NEXT}}
+
 6.08      2020-05-22 15:26:00Z (TRIAL RELEASE)
   - In t/chunked.t, leave choosing IP address family to IO::Socket::IP (GH#42) (Shoichi Kaji)
   - Add "IPv6 SUPPORT" section to pod (GH#43) (Shoichi Kaji)
