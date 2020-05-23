@@ -7,6 +7,7 @@ use Config;
 use HTTP::Daemon;
 use HTTP::Response;
 use HTTP::Tiny 0.042;
+use IO::Socket::IP 0.25;
 
 my $can_fork
     = $Config{d_fork}
