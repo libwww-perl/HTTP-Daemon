@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.08
+version 6.09
 
 =head1 SYNOPSIS
 
