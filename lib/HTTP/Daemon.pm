@@ -47,6 +47,7 @@ sub url {
     my $self = shift;
 
     my $host = $self->sockhost;
+    $host =~ s/%/%25/g;
     $host = "127.0.0.1" if $host eq "0.0.0.0";
     $host = "::1"       if $host eq "::";
     $host = "[$host]"   if $self->sockdomain == Socket::AF_INET6;
