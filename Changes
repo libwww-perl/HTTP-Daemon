@@ -1,6 +1,8 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - An IPv6 zone separator must be URI-quoted (GH#47) (Petr Pisar and Olaf
+    Alders)
 
 6.10      2020-05-26 16:20:36Z
   - No changes since TRIAL release 6.09
