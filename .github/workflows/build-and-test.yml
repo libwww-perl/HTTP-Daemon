@@ -29,7 +29,7 @@ jobs:
         run: dzil build --no-tgz --in dzil_build_dir
       - name: Maybe skip Changes test
         if: github.ref == 'refs/heads/master'
-        run: rm dzil_build_dir/xt/release/changes_has_content.t
+        run: rm dzil_build_dir/xt/release/changes_has_content.t && perl -pi -e "s|'xt/release/changes_has_content.t'||g" dzil_build_dir/xt/author/*
       - uses: actions/upload-artifact@master
         with:
           name: build_dir
