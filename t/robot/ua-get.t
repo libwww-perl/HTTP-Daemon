@@ -49,7 +49,7 @@ else {
     use Config;
     my $perl = $Config{'perlpath'};
     $perl = $^X if $^O eq 'VMS' or -x $^X and $^X =~ m,^([a-z]:)?/,i;
-    open(DAEMON, "$perl robot/ua.t daemon |") or die "Can't exec daemon: $!";
+    open(DAEMON, "$perl t/robot/ua.t daemon |") or die "Can't exec daemon: $!";
 }
 
 print "1..8\n";
