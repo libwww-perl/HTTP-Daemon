@@ -1,6 +1,6 @@
 Revision history for HTTP-Daemon
 
-{{$NEXT}}
+6.14      2022-03-03 20:47:51Z
   - Test using loopback rather than internet accessible address (GH#52)
     (Michal Josef Špaček)
   - Use GH Perl helpers for build and coverage jobs (GH#53) (Olaf Alders)
