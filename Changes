@@ -1,6 +1,11 @@
 Revision history for HTTP-Daemon
 
 {{$NEXT}}
+  - Fix CVE-2022-31081: Inconsistent Interpretation of HTTP Requests
+    Correctly handle multiple Content-Length headers and its variants
+    (Theo van Hoesel)
+    Closes "Discrepancies in the Parsing of Content Length header ..." (GH#56)
+    (blessingcharles)
 
 6.14      2022-03-03 20:47:51Z
   - Test using loopback rather than internet accessible address (GH#52)
