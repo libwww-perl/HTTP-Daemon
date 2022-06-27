@@ -55,29 +55,32 @@ sub get_tests{
     {
         title   => "Positive Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
-            'Content-Length' => '+1', # quotes are needed to retain plus-sign
+            'Content-Length' => '+6', # quotes are needed to retain plus-sign
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Negative Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
-            'Content-Length' => '-1',
+            'Content-Length' => '-5',
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Non Integer Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
             'Content-Length' => '3.14',
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Explicit Content Length ... with exact length",
@@ -248,6 +251,7 @@ sub patch_http_tiny {
     # have been commented out
 
     no strict 'refs';
+    no warnings;
 
     *HTTP::Tiny::Handle::write_content_body = sub {
         @_ == 2 || die(q/Usage: $handle->write_content_body(request)/ . "\n");
