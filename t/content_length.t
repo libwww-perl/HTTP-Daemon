@@ -55,8 +55,9 @@ sub get_tests{
     {
         title   => "Positive Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
-            'Content-Length' => '+1', # quotes are needed to retain plus-sign
+            'Content-Length' => '+6', # quotes are needed to retain plus-sign
         },
         status  => 400,
         like    => qr/value must be an unsigned integer/,
@@ -64,8 +65,9 @@ sub get_tests{
     {
         title   => "Negative Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
-            'Content-Length' => '-1',
+            'Content-Length' => '-5',
         },
         status  => 400,
         like    => qr/value must be an unsigned integer/,
@@ -73,6 +75,7 @@ sub get_tests{
     {
         title   => "Non Integer Content Length",
         method  => "POST",
+        body    => "ABCDEFGH",
         headers => {
             'Content-Length' => '3.14',
         },
