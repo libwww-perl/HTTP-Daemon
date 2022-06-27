@@ -59,7 +59,7 @@ sub get_tests{
             'Content-Length' => '+1', # quotes are needed to retain plus-sign
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Negative Content Length",
@@ -68,7 +68,7 @@ sub get_tests{
             'Content-Length' => '-1',
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Non Integer Content Length",
@@ -77,7 +77,7 @@ sub get_tests{
             'Content-Length' => '3.14',
         },
         status  => 400,
-        like    => qr/value must be a unsigned integer/,
+        like    => qr/value must be an unsigned integer/,
     },
     {
         title   => "Explicit Content Length ... with exact length",
