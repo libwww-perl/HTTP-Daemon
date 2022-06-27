@@ -248,6 +248,7 @@ sub patch_http_tiny {
     # have been commented out
 
     no strict 'refs';
+    no warnings;
 
     *HTTP::Tiny::Handle::write_content_body = sub {
         @_ == 2 || die(q/Usage: $handle->write_content_body(request)/ . "\n");
