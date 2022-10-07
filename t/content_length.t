@@ -12,7 +12,8 @@ use Test::More 0.98;
 
 patch_http_tiny(); # do not fix Content-Length, we want to forge something bad
 
-plan skip_all => "This system cannot fork" unless can_fork();
+plan skip_all => 'This system cannot fork' unless can_fork();
+plan skip_all => 'Tests break under Windows' if $^O eq 'MSWin32';
 
 my $BASE_URL;
 my @TESTS = get_tests();
