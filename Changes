@@ -6,6 +6,7 @@ Revision history for HTTP-Daemon
     (Theo van Hoesel)
     Closes "Discrepancies in the Parsing of Content Length header ..." (GH#56)
     (blessingcharles)
+  - Add content length tests (GH#60) (Theo van Hoesel and Olaf Alders)
 
 6.14      2022-03-03 20:47:51Z
   - Test using loopback rather than internet accessible address (GH#52)
