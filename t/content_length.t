@@ -1,14 +1,14 @@
+#!perl
+
 use strict;
 use warnings;
 
+use Config qw( %Config );
+use HTTP::Daemon ();
+use HTTP::Response ();
+use HTTP::Status qw( RC_NOT_FOUND );
+use HTTP::Tiny 0.042 ();
 use Test::More 0.98;
-
-use Config;
-
-use HTTP::Daemon;
-use HTTP::Response;
-use HTTP::Status;
-use HTTP::Tiny 0.042;
 
 patch_http_tiny(); # do not fix Content-Length, we want to forge something bad
 
