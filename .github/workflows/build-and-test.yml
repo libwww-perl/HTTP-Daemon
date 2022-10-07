@@ -19,7 +19,7 @@ jobs:
     container:
       image: perldocker/perl-tester:5.34
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run Tests
         env:
           AUTHOR_TESTING: 1
@@ -28,7 +28,7 @@ jobs:
           RELEASE_TESTING: 1
           TEST_TIDYALL_VERBOSE: 1
         run: auto-build-and-test-dist
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: build_dir
           path: build_dir
@@ -38,8 +38,8 @@ jobs:
     container:
       image: perldocker/perl-tester:5.34
     steps:
-      - uses: actions/checkout@v2 # codecov wants to be inside a Git repository
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v3 # codecov wants to be inside a Git repository
+      - uses: actions/download-artifact@v3
         with:
           name: build_dir
           path: .
@@ -74,7 +74,7 @@ jobs:
         AUTHOR_TESTING: 0
         RELEASE_TESTING: 0
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: build_dir
           path: .
@@ -110,12 +110,12 @@ jobs:
     name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
     needs: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set Up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl-version }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: build_dir
           path: .
@@ -152,12 +152,12 @@ jobs:
     name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
     needs: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set Up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl-version }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: build_dir
           path: .
