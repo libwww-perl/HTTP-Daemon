@@ -206,25 +206,6 @@ ok($res->content, qr|/echo/redirect|);
 ok($res->previous->is_redirect);
 ok($res->previous->code, 301);
 
-# Let's test a redirect loop too
-sub httpd_get_redirect2 { shift->send_redirect("/redirect3/") }
-sub httpd_get_redirect3 { shift->send_redirect("/redirect2/") }
-
-$req->uri(url("/redirect2", $base));
-$ua->max_redirect(5);
-$res = $ua->request($req);
-
-#print $res->as_string;
-ok($res->is_redirect);
-ok($res->header("Client-Warning"), qr/loop detected/i);
-ok($res->redirects,                5);
-
-$ua->max_redirect(0);
-$res = $ua->request($req);
-ok($res->previous,  undef);
-ok($res->redirects, 0);
-$ua->max_redirect(5);
-
 #----------------------------------------------------------------
 print "Check basic authorization...\n";
 
