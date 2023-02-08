@@ -87,7 +87,7 @@ jobs:
           --show-build-log-on-failure
       - name: Run Tests
         if: success()
-        run: prove -lr --jobs 2 t
+        run: prove -lrv --jobs 2 t
   test_macos:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -126,7 +126,7 @@ jobs:
           cpanfile: "cpanfile"
           args: "--with-recommends --with-suggests --with-test"
           sudo: false
-      - run: prove -l t
+      - run: prove -lrv t
         env:
           AUTHOR_TESTING: 0
           RELEASE_TESTING: 0
@@ -167,7 +167,7 @@ jobs:
           cpanfile: "cpanfile"
           sudo: false
       - run: perl -V
-      - run: prove -l t
+      - run: prove -lrv t
         env:
           AUTHOR_TESTING: 0
           RELEASE_TESTING: 0
