@@ -76,11 +76,11 @@ jobs:
           path: .
       - name: Install deps
         if: success()
-        run: >
-          cpm install -g
-          --cpanfile cpanfile
-          --with-suggests
-          --show-build-log-on-failure
+        uses: perl-actions/install-with-cpm@v1.4
+        with:
+          cpanfile: "cpanfile"
+          args: "--with-recommends --with-suggests --with-test --with-develop"
+          sudo: false
       - name: Run Tests
         if: success()
         run: prove -lrv t
@@ -120,7 +120,7 @@ jobs:
         uses: perl-actions/install-with-cpm@v1.4
         with:
           cpanfile: "cpanfile"
-          args: "--with-recommends --with-suggests --with-test"
+          args: "--with-recommends --with-suggests --with-test --with-develop"
           sudo: false
       - run: prove -lrv t
         env:
