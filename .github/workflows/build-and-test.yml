@@ -83,7 +83,7 @@ jobs:
           --show-build-log-on-failure
       - name: Run Tests
         if: success()
-        run: prove -lrv --jobs 2 t
+        run: prove -lrv t
   test_macos:
     runs-on: ${{ matrix.os }}
     strategy:
