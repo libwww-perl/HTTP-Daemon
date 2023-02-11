@@ -45,7 +45,7 @@ else {
 }
 
 use Test;
-plan tests => 54;
+plan tests => 46;
 
 my $greeting = <DAEMON>;
 $greeting =~ /(<[^>]+>)/;
