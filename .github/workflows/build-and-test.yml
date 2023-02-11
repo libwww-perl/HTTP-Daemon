@@ -28,7 +28,9 @@ jobs:
           RELEASE_TESTING: 1
           TEST_TIDYALL_VERBOSE: 1
           HARNESS_VERBOSE: 1
-        run: auto-build-and-test-dist
+        run: >
+          cpan-install-build-deps
+          build-dist
       - uses: actions/upload-artifact@v2
         with:
           name: build_dir
