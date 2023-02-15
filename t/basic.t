@@ -1,97 +1,46 @@
+use strict;
+use warnings;
 use Test::Needs 'LWP::UserAgent';
 
-if ($^O eq "MacOS") {
-    print "1..0\n";
-    exit(0);
-}
+use Test::More tests => 45;
+use lib 't/lib';
 
-$| = 1;    # autoflush
+use TestServer::BasicTests;
 
-require IO::Socket::IP;   # make sure this work before we try to make a HTTP::Daemon
+use HTTP::Request;
+use File::Temp qw(tempfile);
+use MIME::Base64;
 
-# First we make ourself a daemon in another process
-my $D = shift || '';
-if ($D eq 'daemon') {
+my $daemon = TestServer::BasicTests->new;
+my $base = $daemon->start;
 
-    require HTTP::Daemon;
+note "Will access HTTP server at $base\n";
 
-    my $d = HTTP::Daemon->new(Timeout => 10);
-
-    print "Please to meet you at: <URL:", $d->url, ">\n";
-    open(STDOUT, $^O eq 'VMS' ? ">nl: " : ">/dev/null");
-
-    while ($c = $d->accept) {
-        $r = $c->get_request;
-        if ($r) {
-            my $p    = ($r->uri->path_segments)[1];
-            my $func = lc("httpd_" . $r->method . "_$p");
-            if (defined &$func) {
-                &$func($c, $r);
-            }
-            else {
-                $c->send_error(404);
-            }
-        }
-        $c = undef;    # close connection
-    }
-    print STDERR "HTTP Server terminated\n";
-    exit;
-}
-else {
-    use Config;
-    my $perl = $Config{'perlpath'};
-    $perl = $^X if $^O eq 'VMS' or -x $^X and $^X =~ m,^([a-z]:)?/,i;
-    open(DAEMON, "$perl t/basic.t daemon |") or die "Can't exec daemon: $!";
-}
-
-use Test;
-plan tests => 46;
-
-my $greeting = <DAEMON>;
-$greeting =~ /(<[^>]+>)/;
-
-require URI;
-my $base = URI->new($1);
-
-sub url {
-    my $u = URI->new(@_);
-    $u = $u->abs($_[1]) if @_ > 1;
-    $u->as_string;
-}
-
-print "Will access HTTP server at $base\n";
-
-require HTTP::Request;
-$ua = LWP::UserAgent->new;
+my $ua = LWP::UserAgent->new;
 $ua->agent("Mozilla/0.01 " . $ua->agent);
 $ua->from('gisle@aas.no');
 
+my $req;
+my $res;
+
 #----------------------------------------------------------------
-print "Bad request...\n";
-$req = HTTP::Request->new(GET => url("/not_found", $base));
+note "Bad request...\n";
+$req = HTTP::Request->new(GET => $daemon->url("/not_found"));
 $req->header(X_Foo => "Bar");
 $res = $ua->request($req);
 
 ok($res->is_error);
-ok($res->code,    404);
-ok($res->message, qr/not\s+found/i);
+is($res->code,    404);
+like($res->message, qr/not\s+found/i);
 
 # we also expect a few headers
 ok($res->server);
 ok($res->date);
 
 #----------------------------------------------------------------
-print "Simple echo...\n";
+note "Simple echo...\n";
 
-sub httpd_get_echo {
-    my ($c, $req) = @_;
-    $c->send_basic_header(200);
-    print $c "Content-Type: message/http\015\012";
-    $c->send_crlf;
-    print $c $req->as_string;
-}
-
-$req = HTTP::Request->new(GET => url("/echo/path_info?query", $base));
+$req = HTTP::Request->new(GET => $daemon->url("/echo/path_info?query"));
 $req->push_header(Accept     => 'text/html');
 $req->push_header(Accept     => 'text/plain; q=0.9');
 $req->push_header(Accept     => 'image/*');
@@ -109,27 +58,27 @@ $res = $ua->request($req);
 #print $res->as_string;
 
 ok($res->is_success);
-ok($res->code,    200);
-ok($res->message, "OK");
+is($res->code,    200);
+is($res->message, "OK");
 
 $_      = $res->content;
-@accept = /^Accept:\s*(.*)/mg;
+my @accept = /^Accept:\s*(.*)/mg;
 
-ok($_,      qr/^From:\s*gisle\@aas\.no\n/m);
-ok($_,      qr/^Host:/m);
-ok(@accept, 3);
-ok($_,      qr/^Accept:\s*text\/html/m);
-ok($_,      qr/^Accept:\s*text\/plain/m);
-ok($_,      qr/^Accept:\s*image\/\*/m);
-ok($_,      qr/^If-Modified-Since:\s*\w{3},\s+\d+/m);
-ok($_,      qr/^Long-Text:\s*This.*broken between/m);
-ok($_,      qr/^Foo-Bar:\s*1\n/m);
-ok($_,      qr/^X-Foo:\s*Bar\n/m);
-ok($_,      qr/^User-Agent:\s*Mozilla\/0.01/m);
+like($_,      qr/^From:\s*gisle\@aas\.no\n/m);
+like($_,      qr/^Host:/m);
+is(scalar @accept, 3);
+like($_,      qr/^Accept:\s*text\/html/m);
+like($_,      qr/^Accept:\s*text\/plain/m);
+like($_,      qr/^Accept:\s*image\/\*/m);
+like($_,      qr/^If-Modified-Since:\s*\w{3},\s+\d+/m);
+like($_,      qr/^Long-Text:\s*This.*broken between/m);
+like($_,      qr/^Foo-Bar:\s*1\n/m);
+like($_,      qr/^X-Foo:\s*Bar\n/m);
+like($_,      qr/^User-Agent:\s*Mozilla\/0.01/m);
 
 # Try it with the higher level 'get' interface
 $res = $ua->get(
-    url("/echo/path_info?query", $base),
+    $daemon->url("/echo/path_info?query"),
     Accept => 'text/html',
     Accept => 'text/plain; q=0.9',
     Accept => 'image/*',
@@ -137,149 +86,89 @@ $res = $ua->get(
 );
 
 #$res->dump;
-ok($res->code,    200);
-ok($res->content, qr/^From: gisle\@aas.no$/m);
+is($res->code,    200);
+like($res->content, qr/^From: gisle\@aas.no$/m);
 
 #----------------------------------------------------------------
-print "Send file...\n";
+note "Send file...\n";
 
-my $file = "test-$$.html";
-open(FILE, ">$file") or die "Can't create $file: $!";
-binmode FILE or die "Can't binmode $file: $!";
-print FILE <<EOT;
+{
+    my ($fh, $filename) = tempfile( 'http-daemon-test-XXXXXX', TMPDIR => 1, SUFFIX => '.html' );
+    binmode $fh;
+    print $fh <<EOT;
 <html><title>En pr�ve</title>
 <h1>Dette er en testfil</h1>
 Jeg vet ikke hvor stor fila beh�ver � v�re heller, men dette
 er sikkert nok i massevis.
 EOT
-close(FILE);
+    close $fh;
 
-sub httpd_get_file {
-    my ($c, $r) = @_;
-    my %form = $r->uri->query_form;
-    my $file = $form{'name'};
-    $c->send_file_response($file);
-    unlink($file) if $file =~ /^test-/;
+    $req = HTTP::Request->new(GET => $daemon->url("/file", { file => $filename }));
+    $res = $ua->request($req);
+
+    #print $res->as_string;
+
+    ok($res->is_success);
+    is($res->content_type,   'text/html');
+    is($res->content_length, 155);
+    is($res->title,          'En pr�ve');
+    like($res->content,      qr/� v�re/);
+
+    unlink $filename;
+
+    # A second try on the same file, should fail because we unlink it
+    $res = $ua->request($req);
+
+    #print $res->as_string;
+    ok($res->is_error);
+    is($res->code, 404);    # not found
 }
-
-$req = HTTP::Request->new(GET => url("/file?name=$file", $base));
-$res = $ua->request($req);
-
-#print $res->as_string;
-
-ok($res->is_success);
-ok($res->content_type,   'text/html');
-ok($res->content_length, 155);
-ok($res->title,          'En pr�ve');
-ok($res->content,        qr/� v�re/);
-
-# A second try on the same file, should fail because we unlink it
-$res = $ua->request($req);
-
-#print $res->as_string;
-ok($res->is_error);
-ok($res->code, 404);    # not found
 
 # Then try to list current directory
-$req = HTTP::Request->new(GET => url("/file?name=.", $base));
+$req = HTTP::Request->new(GET => $daemon->url("/file?file=."));
 $res = $ua->request($req);
 
 #print $res->as_string;
-ok($res->code, 501);    # NYI
+is($res->code, 501);    # NYI
 
 
 #----------------------------------------------------------------
-print "Check redirect...\n";
+note "Check redirect...\n";
 
-sub httpd_get_redirect {
-    my ($c) = @_;
-    $c->send_redirect("/echo/redirect");
-}
-
-$req = HTTP::Request->new(GET => url("/redirect/foo", $base));
+$req = HTTP::Request->new(GET => $daemon->url("/redirect/foo"));
 $res = $ua->request($req);
 
-#print $res->as_string;
-
 ok($res->is_success);
-ok($res->content, qr|/echo/redirect|);
+like($res->content, qr|/echo/redirect|);
 ok($res->previous->is_redirect);
-ok($res->previous->code, 301);
+is($res->previous->code, 301);
+
 
 #----------------------------------------------------------------
-print "Check basic authorization...\n";
+note "Check basic authorization...\n";
 
-sub httpd_get_basic {
-    my ($c, $r) = @_;
+$req = HTTP::Request->new(GET => $daemon->url("/basic"));
+my $auth = MIME::Base64::encode("ok 12:xyzzy");
 
-    #print STDERR $r->as_string;
-    my ($u, $p) = $r->authorization_basic;
-    if (defined($u) && $u eq 'ok 12' && $p eq 'xyzzy') {
-        $c->send_basic_header(200);
-        print $c "Content-Type: text/plain";
-        $c->send_crlf;
-        $c->send_crlf;
-        $c->print("$u\n");
-    }
-    else {
-        $c->send_basic_header(401);
-        $c->print("WWW-Authenticate: Basic realm=\"libwww-perl\"\015\012");
-        $c->send_crlf;
-    }
-}
-
-{
-
-    package MyUA;
-    @ISA = qw(LWP::UserAgent);
-
-    sub get_basic_credentials {
-        my ($self, $realm, $uri, $proxy) = @_;
-        if ($realm eq "libwww-perl" && $uri->rel($base) eq "basic") {
-            return ("ok 12", "xyzzy");
-        }
-        else {
-            return undef;
-        }
-    }
-}
-$req = HTTP::Request->new(GET => url("/basic", $base));
-$res = MyUA->new->request($req);
-
-#print $res->as_string;
+$req->header(Authorization => 'Basic ' . $auth);
+$res = $ua->request($req);
 
 ok($res->is_success);
 
-#print $res->content;
-
-# Let's try with a $ua that does not pass out credentials
+$req->header('Authorization' => undef);
 $res = $ua->request($req);
-ok($res->code, 401);
+is($res->code, 401);
 
-# Let's try to set credentials for this realm
-$ua->credentials($req->uri->host_port, "libwww-perl", "ok 12", "xyzzy");
-$res = $ua->request($req);
-ok($res->is_success);
+$auth = MIME::Base64::encode("user:passwd");
 
+$req->header(Authorization => 'Basic ' . $auth);
 # Then illegal credentials
-$ua->credentials($req->uri->host_port, "libwww-perl", "user", "passwd");
 $res = $ua->request($req);
-ok($res->code, 401);
+is($res->code, 401);
 
 
 #----------------------------------------------------------------
-print "Check proxy...\n";
-
-sub httpd_get_proxy {
-    my ($c, $r) = @_;
-    if ($r->method eq "GET" and $r->uri->scheme eq "ftp") {
-        $c->send_basic_header(200);
-        $c->send_crlf;
-    }
-    else {
-        $c->send_error;
-    }
-}
+note "Check proxy...\n";
 
 $ua->proxy(ftp => $base);
 $req = HTTP::Request->new(GET => "ftp://ftp.perl.com/proxy");
@@ -288,28 +177,12 @@ $res = $ua->request($req);
 #print $res->as_string;
 ok($res->is_success);
 
+$ua->proxy(ftp => undef);
+
 #----------------------------------------------------------------
-print "Check POSTing...\n";
+note "Check POSTing...\n";
 
-sub httpd_post_echo {
-    my ($c, $r) = @_;
-    $c->send_basic_header;
-    $c->print("Content-Type: text/plain");
-    $c->send_crlf;
-    $c->send_crlf;
-
-    # Do it the hard way to test the send_file
-    open(TMP, ">tmp$$") || die;
-    binmode(TMP);
-    print TMP $r->as_string;
-    close(TMP) || die;
-
-    $c->send_file("tmp$$");
-
-    unlink("tmp$$");
-}
-
-$req = HTTP::Request->new(POST => url("/echo/foo", $base));
+$req = HTTP::Request->new(POST => $daemon->url("/echo/foo"));
 $req->content_type("application/x-www-form-urlencoded");
 $req->content("foo=bar&bar=test");
 $res = $ua->request($req);
@@ -318,11 +191,11 @@ $res = $ua->request($req);
 
 $_ = $res->content;
 ok($res->is_success);
-ok($_, qr/^Content-Length:\s*16$/mi);
-ok($_, qr/^Content-Type:\s*application\/x-www-form-urlencoded$/mi);
-ok($_, qr/^foo=bar&bar=test$/m);
+like($_, qr/^Content-Length:\s*16$/mi);
+like($_, qr/^Content-Type:\s*application\/x-www-form-urlencoded$/mi);
+like($_, qr/^foo=bar&bar=test$/m);
 
-$req = HTTP::Request->new(POST => url("/echo/foo", $base));
+$req = HTTP::Request->new(POST => $daemon->url("/echo/foo"));
 $req->content_type("multipart/form-data");
 $req->add_part(HTTP::Message->new(["Content-Type" => "text/plain"], "Hi\n"));
 $req->add_part(HTTP::Message->new(["Content-Type" => "text/plain"], "there\n"));
@@ -330,19 +203,13 @@ $res = $ua->request($req);
 
 #print $res->as_string;
 ok($res->is_success);
-ok($res->content =~ /^Content-Type: multipart\/form-data; boundary=/m);
+like($res->content, qr/^Content-Type: multipart\/form-data; boundary=/m);
 
 #----------------------------------------------------------------
-print "Terminating server...\n";
+note "Terminating server...\n";
 
-sub httpd_get_quit {
-    my ($c) = @_;
-    $c->send_error(503, "Bye, bye");
-    exit;                    # terminate HTTP server
-}
-
-$req = HTTP::Request->new(GET => url("/quit", $base));
+$req = HTTP::Request->new(GET => $daemon->url("/quit"));
 $res = $ua->request($req);
 
-ok($res->code,    503);
-ok($res->content, qr/Bye, bye/);
+is($res->code,    503);
+like($res->content, qr/Bye, bye/);
