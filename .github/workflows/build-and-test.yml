@@ -79,7 +79,7 @@ jobs:
         uses: perl-actions/install-with-cpm@v1.4
         with:
           cpanfile: "cpanfile"
-          args: "--with-recommends --with-suggests --with-test --with-develop"
+          args: "--with-recommends --with-suggests --with-test"
           sudo: false
       - name: Run Tests
         if: success()
@@ -120,7 +120,7 @@ jobs:
         uses: perl-actions/install-with-cpm@v1.4
         with:
           cpanfile: "cpanfile"
-          args: "--with-recommends --with-suggests --with-test --with-develop"
+          args: "--with-recommends --with-suggests --with-test"
           sudo: false
       - run: prove -lrv t
         env:
