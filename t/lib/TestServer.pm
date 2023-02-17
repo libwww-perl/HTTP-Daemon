@@ -111,8 +111,31 @@ sub import {
 sub run {
     my $self = shift;
 
+    my $listen_host;
+
+    require Socket;
+    require IO::Socket::IP;
+    my ($err, @res) = Socket::getaddrinfo("localhost", "http", {
+        protocol => Socket::IPPROTO_TCP(),
+    } );
+
+    my @local_hosts = map +(Socket::getnameinfo($_->{addr}, Socket::NI_NUMERICHOST()))[1], @res;
+    push @local_hosts, '127.0.0.1';
+
+    for my $host (@local_hosts) {
+        my $try = IO::Socket::IP->new(LocalAddr => $host, Listen => 1);
+        if ($try) {
+            $listen_host = $host;
+            $try->close;
+            last;
+        }
+    }
+
     require HTTP::Daemon;
-    my $d = HTTP::Daemon->new(Timeout => 10);
+    my $d = HTTP::Daemon->new(
+        Timeout => 10,
+        $listen_host ? ( LocalHost => $listen_host ) : (),
+    );
 
     print "HTTP::Daemon running at <URL:", $d->url, ">\n";
     open STDOUT, '>', File::Spec->devnull;
