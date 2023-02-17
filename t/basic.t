@@ -95,10 +95,10 @@ note "Send file...\n";
 {
     my ($fh, $filename) = tempfile( 'http-daemon-test-XXXXXX', TMPDIR => 1, SUFFIX => '.html' );
     binmode $fh;
-    print $fh <<EOT;
-<html><title>En pr�ve</title>
+    print $fh <<"EOT";
+<html><title>En pr\xF8ve</title>
 <h1>Dette er en testfil</h1>
-Jeg vet ikke hvor stor fila beh�ver � v�re heller, men dette
+Jeg vet ikke hvor stor fila beh\xF8ver \xE5 v\xE6re heller, men dette
 er sikkert nok i massevis.
 EOT
     close $fh;
@@ -110,9 +110,9 @@ EOT
 
     ok($res->is_success);
     is($res->content_type,   'text/html');
-    is($res->content_length, 155);
-    is($res->title,          'En pr�ve');
-    like($res->content,      qr/� v�re/);
+    is($res->content_length, 147);
+    is($res->title,          "En pr\xF8ve");
+    like($res->content,      qr/\xE5 v\xE6re/);
 
     unlink $filename;
 
