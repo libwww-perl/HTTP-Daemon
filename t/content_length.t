@@ -1,15 +1,14 @@
 use strict;
 use warnings;
 
+use HTTP::Response ();
+use IO::Socket::IP ();
+use Socket         qw( $CRLF );
+use IO::Select     ();
 use Test::More 0.98;
 
-use HTTP::Request; 
-use HTTP::Response;
-use IO::Socket::IP;
 use lib 't/lib';
-use TestServer::Reflect;
-use Socket qw($CRLF);
-use IO::Select;
+use TestServer::Reflect ();
 
 my @TESTS = (
     {
