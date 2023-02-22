@@ -71,7 +71,7 @@ sub stop {
     my $pid = delete $self->{pid} or return;
     my $io = delete $self->{io};
 
-    kill 'QUIT', $pid;
+    kill 'KILL', $pid;
     close $io;
 
     waitpid $pid, 0;
