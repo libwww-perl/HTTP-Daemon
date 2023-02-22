@@ -8,7 +8,7 @@ HTTP::Daemon - A simple http server class
 
 =head1 VERSION
 
-version 6.14
+version 6.15
 
 =head1 SYNOPSIS
 
@@ -320,7 +320,7 @@ Gisle Aas <gisle@activestate.com>
 
 =head1 CONTRIBUTORS
 
-=for stopwords Olaf Alders Ville Skyttä Karen Etheridge Mark Stosberg Shoichi Kaji Chase Whitener Slaven Rezic Petr Písař Zefram Alexey Tourbin Bron Gondwana Michal Josef Špaček Mike Schilli Tom Hukins Adam Kennedy Sjogren Alex Kapranoff amire80 Andreas J. Koenig Bill Mann Daniel Hedlund David E. Wheeler DAVIDRW Father Chrysostomos Ferenc Erki FWILES Gavin Peters Graeme Thompson Hans-H. Froehlich Ian Kilgore Jacob J jefflee john9art murphy Ondrej Hanak Perlover Peter Rabbitson phrstbrn Robert Stone Rolf Grossmann ruff sasao Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban
+=for stopwords Olaf Alders Ville Skyttä Graham Knop Karen Etheridge Mark Stosberg Shoichi Kaji Chase Whitener Theo van Hoesel Slaven Rezic Petr Písař Zefram Alexey Tourbin Bron Gondwana Michal Josef Špaček Mike Schilli Tom Hukins Adam Kennedy Sjogren Alex Kapranoff amire80 Andreas J. Koenig Bill Mann Daniel Hedlund David E. Wheeler DAVIDRW Father Chrysostomos Ferenc Erki FWILES Gavin Peters Graeme Thompson Hans-H. Froehlich Ian Kilgore Jacob J jefflee john9art murphy Ondrej Hanak Perlover Peter Rabbitson phrstbrn Robert Stone Rolf Grossmann ruff sasao Sean M. Burke Spiros Denaxas Steve Hay Todd Lipcon Tony Finch Toru Yamaguchi Yuri Karaban
 
 =over 4
 
@@ -331,6 +331,10 @@ Olaf Alders <olaf@wundersolutions.com>
 =item *
 
 Ville Skyttä <ville.skytta@iki.fi>
+
+=item *
+
+Graham Knop <haarg@haarg.org>
 
 =item *
 
@@ -347,6 +351,10 @@ Shoichi Kaji <skaji@cpan.org>
 =item *
 
 Chase Whitener <capoeirab@cpan.org>
+
+=item *
+
+Theo van Hoesel <tvanhoesel@perceptyx.com>
 
 =item *
 
