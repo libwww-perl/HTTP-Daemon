@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Build distribution
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: perldocker/perl-tester:5.34
     steps:
@@ -30,7 +30,7 @@ jobs:
           path: build_dir
   coverage-job:
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: perldocker/perl-tester:5.34
     steps:
