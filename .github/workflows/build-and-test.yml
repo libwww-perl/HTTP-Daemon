@@ -74,7 +74,7 @@ jobs:
           path: .
       - name: Install deps
         if: success()
-        uses: perl-actions/install-with-cpm@v1.4
+        uses: perl-actions/install-with-cpm@v1.9
         with:
           cpanfile: "cpanfile"
           args: "--with-recommends --with-suggests --with-test"
@@ -113,7 +113,7 @@ jobs:
           path: .
       - run: perl -V
       - name: install deps using cpm
-        uses: perl-actions/install-with-cpm@v1.4
+        uses: perl-actions/install-with-cpm@v1.9
         with:
           cpanfile: "cpanfile"
           args: "--with-recommends --with-suggests --with-test"
@@ -154,7 +154,7 @@ jobs:
           name: build_dir
           path: .
       - name: install deps using cpanm
-        uses: perl-actions/install-with-cpm@v1.4
+        uses: perl-actions/install-with-cpm@v1.9
         with:
           cpanfile: "cpanfile"
           sudo: false
