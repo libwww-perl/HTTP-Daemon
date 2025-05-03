@@ -17,7 +17,7 @@ jobs:
     container:
       image: perldocker/perl-tester:5.34
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build Dist
         run: >
           cpan-install-build-deps;
@@ -32,7 +32,7 @@ jobs:
     container:
       image: perldocker/perl-tester:5.34
     steps:
-      - uses: actions/checkout@v2 # codecov wants to be inside a Git repository
+      - uses: actions/checkout@v4 # codecov wants to be inside a Git repository
       - uses: actions/download-artifact@v4
         with:
           name: build_dir
@@ -102,7 +102,7 @@ jobs:
     name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
     needs: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set Up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
@@ -144,7 +144,7 @@ jobs:
     name: Perl ${{ matrix.perl-version }} on ${{ matrix.os }}
     needs: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set Up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
