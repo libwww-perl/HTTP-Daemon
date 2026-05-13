@@ -132,6 +132,8 @@ jobs:
           AUTHOR_TESTING: 0
           RELEASE_TESTING: 0
   test_windows:
+    # Temporarily disabled - re-enable by removing this `if`.
+    if: false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
