@@ -24,7 +24,7 @@ jobs:
         run: >
           cpan-install-build-deps;
           build-dist
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: build_dir
           path: build_dir
@@ -35,7 +35,7 @@ jobs:
       image: perldocker/perl-tester:5.42
     steps:
       - uses: actions/checkout@v6 # codecov wants to be inside a Git repository
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: build_dir
           path: .
@@ -75,7 +75,7 @@ jobs:
         AUTHOR_TESTING: 0
         RELEASE_TESTING: 0
     steps:
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: build_dir
           path: .
@@ -120,7 +120,7 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl-version }}
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: build_dir
           path: .
@@ -166,7 +166,7 @@ jobs:
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: ${{ matrix.perl-version }}
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: build_dir
           path: .
