@@ -598,11 +598,10 @@ sub send_dir {
 sub send_file {
     my ($self, $file) = @_;
     my $opened = 0;
-    local (*FILE);
     if (!ref($file)) {
-        open(FILE, $file) || return undef;
-        binmode(FILE);
-        $file = \*FILE;
+        open(my $fh, '<', $file) || return undef;
+        binmode($fh)             || do { close($fh); return undef };
+        $file = $fh;
         $opened++;
     }
     my $cnt = 0;
@@ -614,7 +613,11 @@ sub send_file {
         print $self $buf;
     }
     close($file) if $opened;
-    $cnt;
+
+    # Return a "true zero" for empty-but-successful copies so callers
+    # using `send_file or die` can distinguish open failure (undef)
+    # from a successful zero-byte transfer.
+    $cnt || '0E0';
 }
 
 sub daemon {
@@ -895,6 +898,28 @@ file is a directory we try to generate an HTML index of it.
 Copy the file to the client.  The file can be a string (which
 will be interpreted as a filename) or a reference to an C<IO::Handle>
 or glob.
+
+Returns the number of bytes copied on success, or C<undef> if the
+filename form failed to open.  An empty file returns the string
+C<'0E0'> (zero numerically, true in boolean context) so that callers
+using C<< send_file or die >> can distinguish open failure from a
+successful zero-byte transfer.
+
+The filename form uses Perl's 3-argument C<open> with an explicit C<<
+< >> mode, so the path is no longer interpreted as a 2-argument
+C<open> shell-magic shape such as C<< | cmd >>, C<< cmd | >>, or
+C<< > path >>.  See
+L<CVE-2026-8450|https://www.cve.org/CVERecord?id=CVE-2026-8450> for
+the prior 2-argument C<open> behaviour this replaces.
+
+Note that this fix only neutralises 2-argument C<open> shell-magic.
+Callers remain responsible for validating attacker-influenced paths:
+C<send_file> will still happily open symlinks, character/block devices
+(e.g. C</dev/zero>, C</dev/stdin>), named pipes (which may block the
+worker), and files outside an intended document root.  If C<$filename>
+can be derived from request input, validate it (canonicalise, reject
+C<..> segments, require C<-f _> and a vetted prefix) before passing it
+in.
 
 =item $c->daemon
 
