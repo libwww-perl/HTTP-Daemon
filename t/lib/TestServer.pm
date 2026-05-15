@@ -36,7 +36,6 @@ sub perl_cmd {
     $perl = qq["$perl"]
         if $perl =~ /\s/;
 
-    my @libs = $self->lib_dirs;
     for my $lib ($self->lib_dirs) {
         my $quoted = $lib =~ /\s/ ? qq["$lib"] : $lib;
         $perl .= " -I$quoted";
