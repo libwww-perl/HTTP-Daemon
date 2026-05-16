@@ -29,16 +29,11 @@ sub lib_dirs {
     return @libs;
 }
 
-sub perl_cmd {
-    my $self = shift;
-    return ($self->perl, map {"-I$_"} $self->lib_dirs);
-}
-
 sub start {
     my $self  = shift;
     my $class = ref $self;
 
-    my @perl = $self->perl_cmd;
+    my @perl = ($self->perl, map {"-I$_"} $self->lib_dirs);
 
     my $pid = open my $DAEMON, '-|', @perl, "-M$class=run", '-e1'
         or die "Can't exec daemon: $!";
