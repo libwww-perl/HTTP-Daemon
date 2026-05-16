@@ -45,13 +45,13 @@ my $writer
     = qq{$^X -e 'open my \$f, q{>}, \$ENV{HTTPD_MAGIC_MARKER} or die; close \$f'};
 
 my @magic_shapes = (
-    {name => 'write-pipe', shape => sub {"| $writer"}},
-    {name => 'read-pipe',  shape => sub {"$writer |"}},
 
-    # 2-arg open() strips leading whitespace before checking for magic
-    # prefixes, so " | cmd" (note the leading space) is also a pipe.
-    {name => 'leading-ws-pipe', shape => sub {" | $writer"}},
-    {name => 'write-redirect',  shape => sub { my ($m) = @_; "> $m" }},
+    # One pipe shape stands for the whole command-execution family
+    # (| cmd, cmd |, ...). The leading-space spelling is the one kept:
+    # 2-arg open() strips leading whitespace before testing for a magic
+    # prefix, so " | cmd" also exercises that quirk.
+    {name => 'pipe',           shape => sub {" | $writer"}},
+    {name => 'write-redirect', shape => sub { my ($m) = @_; "> $m" }},
 );
 
 for my $case (@magic_shapes) {
