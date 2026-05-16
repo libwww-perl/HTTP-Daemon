@@ -31,24 +31,16 @@ sub lib_dirs {
 
 sub perl_cmd {
     my $self = shift;
-    my $perl = $self->perl;
-    $perl = qq["$perl"] if $perl =~ /\s/;
-
-    for my $lib ($self->lib_dirs) {
-        my $quoted = $lib =~ /\s/ ? qq["$lib"] : $lib;
-        $perl .= " -I$quoted";
-    }
-
-    return $perl;
+    return ($self->perl, map {"-I$_"} $self->lib_dirs);
 }
 
 sub start {
     my $self  = shift;
     my $class = ref $self;
 
-    my $perl = $self->perl_cmd;
+    my @perl = $self->perl_cmd;
 
-    my $pid = open my $DAEMON, '-|', "$perl -M$class=run -e1"
+    my $pid = open my $DAEMON, '-|', @perl, "-M$class=run", '-e1'
         or die "Can't exec daemon: $!";
 
     my $greeting = <$DAEMON>;
