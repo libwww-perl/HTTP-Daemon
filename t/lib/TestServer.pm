@@ -48,7 +48,7 @@ sub start {
 
     my $perl = $self->perl_cmd;
 
-    my $pid = open my $DAEMON, "$perl -M$class=run -e1 |"
+    my $pid = open my $DAEMON, '-|', "$perl -M$class=run -e1"
         or die "Can't exec daemon: $!";
 
     my $greeting = <$DAEMON>;
