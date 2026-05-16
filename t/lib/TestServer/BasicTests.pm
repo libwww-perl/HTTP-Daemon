@@ -12,8 +12,8 @@ sub dispatch {
     my ($c, $request) = @_;
     my $method = $request->method;
     my $uri    = $request->uri;
-    my $p = ($uri->path_segments)[1];
-    my $call = lc("httpd_" . $method . "_$p");
+    my $p      = ($uri->path_segments)[1];
+    my $call   = lc("httpd_" . $method . "_$p");
     if ($self->can($call)) {
         return $self->$call($c, $request);
     }
@@ -103,7 +103,7 @@ sub httpd_get_partial {
 sub httpd_get_quit {
     my ($self, $c) = @_;
     $c->send_error(503, "Bye, bye");
-    exit;                    # terminate HTTP server
+    exit;    # terminate HTTP server
 }
 
 1;

@@ -52,7 +52,7 @@ sub url {
     $host = "::1"       if $host eq "::";
     $host = "[$host]"   if $self->sockdomain == Socket::AF_INET6;
 
-    my $url = $self->_default_scheme . "://" . $host;
+    my $url  = $self->_default_scheme . "://" . $host;
     my $port = $self->sockport;
     $url .= ":$port" if $port != $self->_default_port;
     $url .= "/";
@@ -85,9 +85,9 @@ our $DEBUG;
 use HTTP::Request  ();
 use HTTP::Response ();
 use HTTP::Status;
-use HTTP::Date qw(time2str);
+use HTTP::Date      qw(time2str);
 use LWP::MediaTypes qw(guess_media_type);
-use Carp ();
+use Carp            ();
 
 # "\r\n" is not portable
 my $CRLF     = "\015\012";
@@ -141,7 +141,7 @@ READ_HEADER:
     }
     if ($buf !~ s/^(\S+)[ \t]+(\S+)(?:[ \t]+(HTTP\/\d+\.\d+))?[^\012]*\012//) {
         ${*$self}{'httpd_client_proto'} = _http_version("HTTP/1.0");
-        $self->send_error(400);                # BAD_REQUEST
+        $self->send_error(400);    # BAD_REQUEST
         $self->reason("Bad request line: $buf");
         return;
     }
@@ -153,7 +153,7 @@ READ_HEADER:
     my $r = HTTP::Request->new($method, $uri);
     $r->protocol($proto);
     ${*$self}{'httpd_client_proto'} = $proto = _http_version($proto);
-    ${*$self}{'httpd_head'} = ($method eq "HEAD");
+    ${*$self}{'httpd_head'}         = ($method eq "HEAD");
 
     if ($proto >= $HTTP_1_0) {
 
@@ -227,7 +227,7 @@ READ_HEADER:
                 last CHUNK if $size == 0;
 
                 my $missing = $size - length($buf) + 2;    # 2=CRLF at chunk end
-                     # must read until we have a complete chunk
+                    # must read until we have a complete chunk
                 while ($missing > 0) {
                     print STDERR "Need $missing more bytes\n" if $DEBUG;
                     my $n = $self->_need_more($buf, $timeout, $fdset);
@@ -294,16 +294,19 @@ READ_HEADER:
         # section 3.3.3 -- Message Body Length
 
         # split and clean up Content-Length ', ' separated string
-        my @vals = map {my $str = $_; $str =~ s/^\s+//; $str =~ s/\s+$//; $str }
+        my @vals
+            = map { my $str = $_; $str =~ s/^\s+//; $str =~ s/\s+$//; $str }
             split ',', $ct_len;
+
         # check that they are all numbers (RFC: Content-Length = 1*DIGIT)
-        my @nums = grep { /^[0-9]+$/} @vals;
+        my @nums = grep {/^[0-9]+$/} @vals;
         unless (@vals == @nums) {
             my $reason = "Content-Length value must be an unsigned integer";
             $self->send_error(400, $reason);
             $self->reason($reason);
             return;
         }
+
         # check they are all the same
         my $ct_len = shift @nums;
         foreach (@nums) {
@@ -313,6 +316,7 @@ READ_HEADER:
             $self->reason($reason);
             return;
         }
+
         # ensure we have now a fixed header, with only 1 value
         $r->header('Content-Length' => $ct_len);
 
@@ -333,7 +337,9 @@ READ_HEADER:
             $buf = '';
         }
     }
-    elsif ($ct_type && $ct_type =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i) {
+    elsif ($ct_type
+        && $ct_type =~ m/^multipart\/\w+\s*;.*boundary\s*=\s*("?)(\w+)\1/i)
+    {
 
         # Handle multipart content type
         my $boundary = "$CRLF--$2--";
@@ -424,7 +430,7 @@ sub send_status_line {
     return if $self->antique_client;
     $status  ||= RC_OK;
     $message ||= status_message($status) || "";
-    $proto   ||= $HTTP::Daemon::PROTO || "HTTP/1.1";
+    $proto   ||= $HTTP::Daemon::PROTO    || "HTTP/1.1";
     print $self "$proto $status $message$CRLF";
 }
 
@@ -566,12 +572,12 @@ sub send_file_response {
         sysopen(F, $file, 0) or return $self->send_error(RC_FORBIDDEN);
         binmode(F);
         my ($mime_type, $file_enc) = guess_media_type($file);
-        my ($size, $mtime) = (stat _)[7, 9];
+        my ($size,      $mtime)    = (stat _)[7, 9];
         unless ($self->antique_client) {
             $self->send_basic_header;
             print $self "Content-Type: $mime_type$CRLF";
             print $self "Content-Encoding: $file_enc$CRLF" if $file_enc;
-            print $self "Content-Length: $size$CRLF" if $size;
+            print $self "Content-Length: $size$CRLF"       if $size;
             print $self "Last-Modified: ", time2str($mtime), "$CRLF" if $mtime;
             print $self $CRLF;
         }

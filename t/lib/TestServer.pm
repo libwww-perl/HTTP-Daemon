@@ -6,7 +6,7 @@ use File::Spec;
 
 sub new {
     my $class = shift;
-    my $self = bless {}, $class;
+    my $self  = bless {}, $class;
 }
 
 sub perl {
@@ -17,8 +17,7 @@ sub perl {
 sub lib_dirs {
     my $self = shift;
     my $perl = $self->perl;
-    $perl = qq["$perl"]
-      if $perl =~ /\s/;
+    $perl = qq["$perl"] if $perl =~ /\s/;
 
     my @inc = `$perl -l -e"print for \@INC"`;
     chomp @inc;
@@ -33,8 +32,7 @@ sub lib_dirs {
 sub perl_cmd {
     my $self = shift;
     my $perl = $self->perl;
-    $perl = qq["$perl"]
-        if $perl =~ /\s/;
+    $perl = qq["$perl"] if $perl =~ /\s/;
 
     for my $lib ($self->lib_dirs) {
         my $quoted = $lib =~ /\s/ ? qq["$lib"] : $lib;
@@ -45,7 +43,7 @@ sub perl_cmd {
 }
 
 sub start {
-    my $self = shift;
+    my $self  = shift;
     my $class = ref $self;
 
     my $perl = $self->perl_cmd;
@@ -60,15 +58,15 @@ sub start {
 
     $self->{url} = $base;
     $self->{pid} = $pid;
-    $self->{io} = $DAEMON;
+    $self->{io}  = $DAEMON;
 
     return $base;
 }
 
 sub stop {
     my $self = shift;
-    my $pid = delete $self->{pid} or return;
-    my $io = delete $self->{io};
+    my $pid  = delete $self->{pid} or return;
+    my $io   = delete $self->{io};
 
     kill 'KILL', $pid;
     close $io;
@@ -79,8 +77,7 @@ sub stop {
 
 sub DESTROY {
     my $self = shift;
-    $self->stop
-        if $self->{pid};
+    $self->stop if $self->{pid};
 }
 
 sub url {
@@ -114,11 +111,13 @@ sub run {
 
     require Socket;
     require IO::Socket::IP;
-    my ($err, @res) = Socket::getaddrinfo("localhost", "http", {
-        protocol => Socket::IPPROTO_TCP(),
-    } );
+    my ($err, @res)
+        = Socket::getaddrinfo("localhost", "http",
+        {protocol => Socket::IPPROTO_TCP(),});
 
-    my @local_hosts = map +(Socket::getnameinfo($_->{addr}, Socket::NI_NUMERICHOST()))[1], @res;
+    my @local_hosts
+        = map +(Socket::getnameinfo($_->{addr}, Socket::NI_NUMERICHOST()))[1],
+        @res;
     push @local_hosts, '127.0.0.1';
 
     for my $host (@local_hosts) {
@@ -133,7 +132,7 @@ sub run {
     require HTTP::Daemon;
     my $d = HTTP::Daemon->new(
         Timeout => 10,
-        $listen_host ? ( LocalHost => $listen_host ) : (),
+        $listen_host ? (LocalHost => $listen_host) : (),
     );
 
     print "HTTP::Daemon running at <URL:", $d->url, ">\n";
