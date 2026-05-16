@@ -142,7 +142,7 @@ sub run {
     while (my $c = $d->accept) {
         my $r = $c->get_request;
         if ($r) {
-            $self->dispatch($c, $r->method, $r->uri, $r);
+            $self->dispatch($c, $r);
         }
         $c = undef;    # close connection
     }
@@ -152,7 +152,7 @@ sub run {
 
 sub dispatch {
     my $self = shift;
-    my ($c, $method, $uri, $request) = @_;
+    my ($c) = @_;
 
     $c->send_error(404);
 }
