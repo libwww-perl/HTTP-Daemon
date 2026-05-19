@@ -28,6 +28,25 @@ jobs:
         with:
           name: build_dir
           path: build_dir
+  lint:
+    name: Lint
+    needs: build
+    runs-on: ubuntu-24.04
+    container:
+      image: perldocker/perl-tester:5.42
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oalders/install-ubi-action@v0.0.6
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          projects: |
+            houseabsolute/precious
+            houseabsolute/omegasort
+      - uses: perl-actions/install-with-cpm@v2
+        with:
+          install: App::perlvars
+          sudo: false
+      - run: precious lint --all
   coverage-job:
     needs: build
     runs-on: ubuntu-24.04
