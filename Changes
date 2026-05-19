@@ -13,6 +13,8 @@ Revision history for HTTP-Daemon
     https://www.cve.org/CVERecord?id=CVE-2026-8450 for the advisory.
     Reported and patched by Stig Palmquist (stigtsp). (Stig Palmquist,
     Olaf Alders)
+
+6.16      2023-02-24 03:07:14Z
   - Bump LWP::UserAgent to 6.37 in TestSuggests (GH#65) (Olaf Alders)
 
 6.15      2023-02-22 22:02:46Z
